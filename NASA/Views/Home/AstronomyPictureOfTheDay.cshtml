@@ -1,0 +1,55 @@
+﻿@model NASA.Models.APOD
+<div class="text-center">
+    @if (ViewBag.NotFoundMessage is not null)
+    {
+        <h1 class="text-danger">
+            @ViewBag.NotFoundMessage
+        </h1>
+    }
+    <h2 class="m-b-xl">
+        @Model.Date
+    </h2>
+
+    @if (Model.Hdurl is not null)
+    {
+        <img class="mb-lg-3" width="900" src="@Model.Hdurl" alt="Astronomy picture of the day.">
+
+    }
+    else if (Model.MediaType == "video")
+    {
+        <iframe width="1000" height="550" src="@Model.Url" frameborder="0" allowfullscreen></iframe>
+
+    }
+    else
+    {
+        <p class="fs-3">
+            Can't load the picture right now.
+            Please try later. :)
+        </p>
+        
+    }
+
+
+    <p class="fs-3">
+        @Model.Title
+    </p>
+
+    @if (Model.Copyright is not null)
+    {
+        <p class="fs-5">
+            Author: @Model.Copyright
+        </p>
+    }
+
+    <p>
+        @Model.Explanation
+    </p>
+
+    <p>
+        <form asp-controller="Home" asp-action="AstronomyPictureOfTheDay" method="get">
+            Pick a date and view the picture or video for that day ->
+            <input type="date" id="start" name="date" value="" min="1995-06-16" max="@DateTime.Now.ToString(NasaApis.dateFormat)" />
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </p>
+</div>
