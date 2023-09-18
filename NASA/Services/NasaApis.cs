@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using NASA.Helper.Exceptions;
 using NASA.Models;
 using NASA.Models.Config;
 using NASA.Services.Contracts;
@@ -56,14 +57,16 @@ namespace NASA.Services
                         }
                         else
                         {
-                            throw new HttpRequestException($"Request in AstronomyPictureOfTheDay failed with status code {(int)response.StatusCode}");
+                            throw new NotSuccessfulAPICallException($"AstronomyPictureOfTheDayAsync failed with code {(int)response.StatusCode}!");
                         }
+                       
                     }
 
                 }
             }
-            catch (HttpRequestException)
+            catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
                 throw;
             }
         }
@@ -100,16 +103,18 @@ namespace NASA.Services
                         }
                         else
                         {
-                            throw new HttpRequestException($"Request in NeoWsFeed failed with status code {(int)response.StatusCode}");
+                            throw new NotSuccessfulAPICallException($"NeoWsFeedAsync failed with code {(int)response.StatusCode}!");
                         }
+
 
                     }
                 }
 
             }
-            catch (HttpRequestException)
+            catch (Exception e)
             {
-                throw; ;
+                Console.WriteLine(e.StackTrace);
+                throw; 
             }
         }
 
