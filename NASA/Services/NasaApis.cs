@@ -16,7 +16,7 @@ namespace NASA.Services
         private readonly IMemoryCache _cache;
         private readonly IOptions<ApiKeys> _keys;
 
-        public NasaApis(IMemoryCache cache,IOptions<ApiKeys> keys)
+        public NasaApis(IMemoryCache cache, IOptions<ApiKeys> keys)
         {
             _cache = cache;
             _keys = keys;
@@ -37,9 +37,9 @@ namespace NASA.Services
 
                     using (var client = new HttpClient())
                     {
-                        
+
                         client.BaseAddress = new Uri("https://api.nasa.gov/");
-                        var response = await client.GetAsync($"https://api.nasa.gov/planetary/apod?date={formattedDate}&api_key={_keys.Value.NasaApiKey}");
+                        var response = await client.GetAsync($"https://api.nasa.gov/planetary/apod?date={formattedDate}&api_key={_keys.Value.NasaApiKey ?? "DEMO_KEY"}");
                         var stringResult = await response.Content.ReadAsStringAsync();
 
                         if (response.IsSuccessStatusCode)
@@ -59,7 +59,7 @@ namespace NASA.Services
                         {
                             throw new NotSuccessfulAPICallException($"AstronomyPictureOfTheDayAsync failed with code {(int)response.StatusCode}!");
                         }
-                       
+
                     }
 
                 }
@@ -88,7 +88,7 @@ namespace NASA.Services
                         var formattedStartDate = startDate.ToString(dateFormat);
 
                         client.BaseAddress = new Uri("https://api.nasa.gov/");
-                        var response = await client.GetAsync($"https://api.nasa.gov/neo/rest/v1/feed?start_date={formattedStartDate}&api_key={_keys.Value.NasaApiKey}");
+                        var response = await client.GetAsync($"https://api.nasa.gov/neo/rest/v1/feed?start_date={formattedStartDate}&api_key={_keys.Value.NasaApiKey ?? "DEMO_KEY"}");
                         var stringResult = await response.Content.ReadAsStringAsync();
 
 
@@ -114,7 +114,7 @@ namespace NASA.Services
             catch (Exception e)
             {
                 Console.WriteLine(e.StackTrace);
-                throw; 
+                throw;
             }
         }
 
