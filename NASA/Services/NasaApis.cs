@@ -12,6 +12,7 @@ namespace NASA.Services
     {
         public const string dateFormat = "yyyy-MM-dd";
         public const string weekKey = "WeekKey";
+        public const string DEMO_KEY = "DEMO_KEY";
 
         private readonly IMemoryCache _cache;
         private readonly IOptions<ApiKeys> _keys;
@@ -39,7 +40,7 @@ namespace NASA.Services
                     {
 
                         client.BaseAddress = new Uri("https://api.nasa.gov/");
-                        var response = await client.GetAsync($"https://api.nasa.gov/planetary/apod?date={formattedDate}&api_key={_keys.Value.NasaApiKey ?? "DEMO_KEY"}");
+                        var response = await client.GetAsync($"https://api.nasa.gov/planetary/apod?date={formattedDate}&api_key={_keys.Value.NasaApiKey ?? DEMO_KEY}");
                         var stringResult = await response.Content.ReadAsStringAsync();
 
                         if (response.IsSuccessStatusCode)
@@ -88,7 +89,7 @@ namespace NASA.Services
                         var formattedStartDate = startDate.ToString(dateFormat);
 
                         client.BaseAddress = new Uri("https://api.nasa.gov/");
-                        var response = await client.GetAsync($"https://api.nasa.gov/neo/rest/v1/feed?start_date={formattedStartDate}&api_key={_keys.Value.NasaApiKey ?? "DEMO_KEY"}");
+                        var response = await client.GetAsync($"https://api.nasa.gov/neo/rest/v1/feed?start_date={formattedStartDate}&api_key={_keys.Value.NasaApiKey ?? DEMO_KEY}");
                         var stringResult = await response.Content.ReadAsStringAsync();
 
 
