@@ -14,6 +14,8 @@ namespace NASA.Services
         public const string weekKey = "WeekKey";
         public const string DEMO_KEY = "DEMO_KEY";
 
+        private static HttpClient client = new HttpClient();
+
         private readonly IMemoryCache _cache;
         private readonly IOptions<ApiKeys> _keys;
 
@@ -36,31 +38,26 @@ namespace NASA.Services
                 else
                 {
 
-                    using (var client = new HttpClient())
+                    //client.BaseAddress = new Uri("https://api.nasa.gov/");
+                    var response = await client.GetAsync($"https://api.nasa.gov/planetary/apod?date={formattedDate}&api_key={_keys.Value.NasaApiKey ?? DEMO_KEY}");
+                    var stringResult = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
                     {
+                        APOD aPicOfTheDay = JsonConvert.DeserializeObject<APOD>(stringResult);
 
-                        client.BaseAddress = new Uri("https://api.nasa.gov/");
-                        var response = await client.GetAsync($"https://api.nasa.gov/planetary/apod?date={formattedDate}&api_key={_keys.Value.NasaApiKey ?? DEMO_KEY}");
-                        var stringResult = await response.Content.ReadAsStringAsync();
+                        _cache.Set($"{aPicOfTheDay.Date}", aPicOfTheDay, TimeSpan.FromMinutes(30));
 
-                        if (response.IsSuccessStatusCode)
-                        {
-                            APOD aPicOfTheDay = JsonConvert.DeserializeObject<APOD>(stringResult);
+                        return aPicOfTheDay;
 
-                            _cache.Set($"{aPicOfTheDay.Date}", aPicOfTheDay, TimeSpan.FromMinutes(30));
-
-                            return aPicOfTheDay;
-
-                        }
-                        else if ((int)response.StatusCode == StatusCodes.Status404NotFound)
-                        {
-                            return null;
-                        }
-                        else
-                        {
-                            throw new NotSuccessfulAPICallException($"AstronomyPictureOfTheDayAsync failed with code {(int)response.StatusCode}!");
-                        }
-
+                    }
+                    else if ((int)response.StatusCode == StatusCodes.Status404NotFound)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        throw new NotSuccessfulAPICallException($"AstronomyPictureOfTheDayAsync failed with code {(int)response.StatusCode}!");
                     }
 
                 }
@@ -83,32 +80,27 @@ namespace NASA.Services
                 }
                 else
                 {
+                    var formattedStartDate = startDate.ToString(dateFormat);
 
-                    using (var client = new HttpClient())
+                    client.BaseAddress = new Uri("https://api.nasa.gov/");
+                    var response = await client.GetAsync($"https://api.nasa.gov/neo/rest/v1/feed?start_date={formattedStartDate}&api_key={_keys.Value.NasaApiKey ?? DEMO_KEY}");
+                    var stringResult = await response.Content.ReadAsStringAsync();
+
+
+                    if (response.IsSuccessStatusCode)
                     {
-                        var formattedStartDate = startDate.ToString(dateFormat);
+                        Week nextSevenDaysWithAsteroids = JsonConvert.DeserializeObject<Week>(stringResult);
 
-                        client.BaseAddress = new Uri("https://api.nasa.gov/");
-                        var response = await client.GetAsync($"https://api.nasa.gov/neo/rest/v1/feed?start_date={formattedStartDate}&api_key={_keys.Value.NasaApiKey ?? DEMO_KEY}");
-                        var stringResult = await response.Content.ReadAsStringAsync();
+                        _cache.Set(weekKey, nextSevenDaysWithAsteroids, TimeSpan.FromMinutes(30));
 
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            Week nextSevenDaysWithAsteroids = JsonConvert.DeserializeObject<Week>(stringResult);
-
-                            _cache.Set(weekKey, nextSevenDaysWithAsteroids, TimeSpan.FromMinutes(30));
-
-                            return nextSevenDaysWithAsteroids;
-
-                        }
-                        else
-                        {
-                            throw new NotSuccessfulAPICallException($"NeoWsFeedAsync failed with code {(int)response.StatusCode}!");
-                        }
-
+                        return nextSevenDaysWithAsteroids;
 
                     }
+                    else
+                    {
+                        throw new NotSuccessfulAPICallException($"NeoWsFeedAsync failed with code {(int)response.StatusCode}!");
+                    }
+
                 }
 
             }
