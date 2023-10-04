@@ -5,8 +5,16 @@ NASA - Top 10 closest asteroid approaches for next 7 days and Astronomy picture 
 > The project is developed on the ASP.NET Core 6 framework with a graphic UI built with MVC. Integrated NASA public API's (Asteroids - NeoWsFeed and APOD). For more info - https://api.nasa.gov/ 
 ### Key Features:
 * **Top 10 closest asteroid approaches for next 7 days** - On the home page are listed top 10 closest asteroid approaches to the Earth for the next 7 days.
-* **Download Excell Table with all asteroid approaches for the next 7 days** - On the bottom of the home page you can download .XLSX file with more information about all asteroid approaches for the next 7 days.
+
+![alt text](https://github.com/Nachosa/Top10Asteroids/blob/main/PicturesForREADME/HomePage.PNG?raw=true)
+
+* **Download Excell Table with all asteroid approaches for the next 7 days** - On the bottom of the home page you can download .XLSX file with more information about all asteroid approaches for the next 7 days. 
+
+![alt text](https://github.com/Nachosa/Top10Asteroids/blob/main/PicturesForREADME/Options.PNG?raw=true)
+
 * **Astronomy Picture Of the Day** - On the bottom of the home page you can go to the APOD page where a picture of the current day is loaded also you can view a picture for the past days.
+  
+![alt text](https://github.com/Nachosa/Top10Asteroids/blob/main/PicturesForREADME/APOD.PNG?raw=true)
   
 ## Installation and Requirements
 * Download VisualStudio - https://visualstudio.microsoft.com/downloads/
